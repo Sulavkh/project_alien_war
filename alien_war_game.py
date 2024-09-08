@@ -6,6 +6,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from game_stat import GameStats
+from button import Button
 
 class AlienWAR:
     """Class to manage game assets and behavior."""
@@ -29,7 +30,9 @@ class AlienWAR:
         #Set background color
         self.bg_color = (230, 230, 230)
     #start alien war in active state.
-        self.game_active = True
+        self.game_active = False
+        # Make the Play button.
+        self.play_button = Button(self, "Play")
 
     def open_game(self):
         """Start the main loop for the game."""
@@ -53,6 +56,9 @@ class AlienWAR:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
 
     def _check_keydown_events(self, event):
         """respond to keypresses"""
@@ -72,6 +78,26 @@ class AlienWAR:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    def _check_play_button(self, mouse_pos):
+        """Start a new game when the player clicks Play."""
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.game_active:
+    
+            # Reset the game statistics.
+            self.stats.reset_stats()
+            self.game_active = True
+
+            # Get rid of any remaining aliens and bullets.
+            self.aliens.empty()
+            self.bullets.empty()
+
+            # Create a new fleet and center the ship.
+            self._create_fleet()
+            self.ship.center_ship()
+
+            #hide the mouse cursor.
+            pygame.mouse.set_visible(False)
+            
     def _fire_bullet(self):
         """Create a new bullet and add it to the bullets group."""
         if len(self.bullets) < self.settings.bullets_allowed:
@@ -152,6 +178,7 @@ class AlienWAR:
             sleep(0.5)
         else:
             self.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _check_aliens_bottom(self):
         """Check if any aliens have reached the bottom of the screen."""
@@ -180,6 +207,10 @@ class AlienWAR:
             bullet.draw_bullet()
         self.ship.blitme()
         self.aliens.draw(self.screen)
+
+        # Draw the play button if the game is inactive.
+        if not self.game_active:
+            self.play_button.draw_button()
 
         pygame.display.flip()
             
