@@ -3,6 +3,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienWAR:
     """Class to manage game assets and behavior."""
@@ -19,8 +20,27 @@ class AlienWAR:
         pygame.display.set_caption("Alien Invasion")
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
 
-        #set background color
+        self._create_fleet()
+
+    def _create_fleet(self):
+        """Create the fleet of aliens."""
+        # Crete an alien and keep adding until no more space.
+        # Spacing between each alien is equal to one alien width.
+        # Make an alien.
+        alien = Alien(self)
+        alien_width = alien.rect.width
+
+        current_x = alien_width
+        while current_x < (self.settings.screen_width - 2 * alien_width):
+            new_alien = Alien(self)
+            new_alien.x = current_x
+            new_alien.rect.x = new_alien.x
+            self.aliens.add(new_alien)
+            current_x += 2 * alien_width
+            
+        #Set background color
         self.bg_color = (230, 230, 230)
 
     def open_game(self):
@@ -83,6 +103,7 @@ class AlienWAR:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.ship.blitme()
+        self.aliens.draw(self.screen)
 
         pygame.display.flip()
             
