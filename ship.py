@@ -1,10 +1,12 @@
 import pygame
+from pygame.sprite import Sprite
 
-class Ship:
+class Ship(Sprite):
     """class to manage the ship"""
 
     def __init__(self, aw_game):
         """initialize ship and set starting position"""
+        super().__init__()
         self.screen = aw_game.screen
         self.settings = aw_game.settings
         self.screen_rect = aw_game.screen.get_rect()
@@ -27,7 +29,7 @@ class Ship:
         """center the ship on the screen."""
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)
-        
+
     def update(self):
         """update the ship's position based on the movement flag."""
         #Update ships x value, not the rect.

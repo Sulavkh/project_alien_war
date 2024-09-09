@@ -92,6 +92,7 @@ class AlienWAR:
             self.stats.reset_stats()
             self.sb.prep_score()
             self.sb.prep_level()
+            self.sb.prep_ships()
             self.game_active = True
 
             # Get rid of any remaining aliens and bullets.
@@ -185,8 +186,9 @@ class AlienWAR:
     def _ship_hit(self):
         """Respond to the ship being hit by an alien."""
         if self.stats.ships_left > 0:
-            #decrement ships_left.
+            #decrement ships_left and update ship scoreboard
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
             #get rid of any remaining aliens and bullets.
             self.aliens.empty()
             self.bullets.empty()
